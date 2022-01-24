@@ -75,7 +75,7 @@ logEndAct "Exit code after installation - $RETVAL"
 
 logBeginAct "DS_setup execution"
 
-resetDict $ds_root $AF_HOME $dictionary_type $ds_database_host $ds_database_port $dictionary_name $ds_database_login $ds_database_password $ds_server_name
+resetDict $ds_root $AF_HOME $dictionary_type $dictionary_database_host $dictionary_database_port $dictionary_name $dictionary_database_login $dictionary_database_password $ds_server_name
 
 RETVAL=$?
 
@@ -105,19 +105,19 @@ fi
   
 #fi
 
-if [ "$dictionary_type" == "postgresql" ]; then
+if [ "$audit_type" == "postgresql" ]; then
 
   AuditType=1
   
   echo $AuditType
   
-elif [ "$dictionary_type" == "mssql"]; then
+elif [ "$audit_type" == "mssql"]; then
 
   AuditType=6
   
 fi
 
-resetAudit $ds_root $AF_HOME $AuditType $ds_database_host $ds_database_port $audit_name $ds_database_login $ds_database_password
+resetAudit $ds_root $AF_HOME $AuditType $audit_database_host $audit_database_port $audit_database_name $audit_database_login $audit_database_password
 
 RETVAL1=$?
 
