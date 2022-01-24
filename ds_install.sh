@@ -86,11 +86,27 @@ if [ "$RETVAL" == "93" ]; then
 
 fi
 
-if [ "$dictionary_type" == "postgresql"]; then
+#printf "%q\n" "$dictionary_type"
+
+#if [ "$dictionary_type" == "postgresql"]; then
+
+ # AuditType=1
+  
+  #echo $AuditType
+  
+#elif [ "$dictionary_type" == "mssql"]; then
+
+ # AuditType=6
+  
+#fi
+
+if [ "$dictionary_type" == "postgresql" ]; then
 
   AuditType=1
   
-elif [ "$dictionary_type" == "postgresql"]; then
+  echo $AuditType
+  
+elif [ "$dictionary_type" == "mssql"]; then
 
   AuditType=6
   
