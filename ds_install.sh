@@ -114,6 +114,14 @@ if [ "$audit_type" == "postgresql" ]; then
 elif [ "$audit_type" == "mssql"]; then
 
   AuditType=6
+
+  echo $AuditType
+
+elif [ "$audit_type" == "mysql"]; then
+
+  AuditType=2
+
+  echo $AuditType
   
 fi
 
