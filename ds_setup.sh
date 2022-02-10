@@ -32,6 +32,15 @@ resetAdminPassword() {
 
 resetAudit() {
 
+if [ "$3" == 2 ; then
+
+  az login --identity -u $9
+
+  az mysql server configuration set --name log_bin_trust_function_creators --resource-group $10 --server $11 --value ON
+
+fi
+`````````````
+
 cd /opt/datasunrise
 
   sudo LD_LIBRARY_PATH="$1":"$1/lib":$LD_LIBRARY_PATH AF_HOME="$2" AF_CONFIG="$2" $1/AppBackendService CHANGE_SETTINGS \

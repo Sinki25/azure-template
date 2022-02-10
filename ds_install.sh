@@ -16,21 +16,22 @@ audit_database_port=${15}
 audit_database_name=${16}
 audit_database_login=${17}
 audit_database_password=${18}
-ds_server_name=${19}
-ds_admin_password=${20}
-ds_remove_servers="/var/lib/waagent/custom-script/download/1/${21}"
-ds_license=${22}
-instance_name=${23}
-target_db_port=${24}
-target_db_type=${25}
-target_db_host=${26}
-target_database=${27}
-target_db_login=${28}
-target_db_password=${29}
-target_proxy_port=${30}
-vm_count=${31}
-resource_group_name=${32}
-vm_scale_set_name=${33}
+audit_server_name=${19}
+ds_server_name=${20}
+ds_admin_password=${21}
+ds_remove_servers="/var/lib/waagent/custom-script/download/1/${22}"
+ds_license=${23}
+instance_name=${24}
+target_db_port=${25}
+target_db_type=${26}
+target_db_host=${27}
+target_database=${28}
+target_db_login=${29}
+target_db_password=${30}
+target_proxy_port=${31}
+vm_count=${32}
+resource_group_name=${33}
+vm_scale_set_name=${34}
 ds_root='/opt/datasunrise'
 AF_HOME=$ds_root
 AF_CONFIG=$AF_HOME
@@ -125,7 +126,7 @@ elif [ "$audit_type" == "mysql" ]; then
   
 fi
 
-resetAudit $ds_root $AF_HOME $AuditType $audit_database_host $audit_database_port $audit_database_name $audit_database_login $audit_database_password
+resetAudit $ds_root $AF_HOME $AuditType $audit_database_host $audit_database_port $audit_database_name $audit_database_login $audit_database_password $identity $resource_group_name  
 
 RETVAL1=$?
 
