@@ -32,11 +32,11 @@ resetAdminPassword() {
 
 resetAudit() {
 
-if [ "$3" == 2 ;] then
+if [ "$3" == 2 ]; then
 
   az login --identity -u $9
 
-  az mysql server configuration set --name log_bin_trust_function_creators --resource-group $10 --server $11 --value ON
+  az mysql server configuration set --name log_bin_trust_function_creators --resource-group ${10} --server ${11} --value ON
 
 fi
 
