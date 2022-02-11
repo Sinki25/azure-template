@@ -1,0 +1,851 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminUsername": {
+        "type": "string",
+        "metadata": {
+            "description": "Linux VM User Account Name. For example, linuxuser"
+      }
+    },
+    "adminPassword": {
+        "type": "securestring",
+        "metadata": {
+            "description": "Linux VM User Password"
+      }
+    },
+     "dnsLabelPrefix": {
+        "defaultValue": "linuxdefault",
+        "type": "String",
+        "metadata": {
+            "description": "DNS Label for the Public IP. It must be lowercase and must match the following regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$."
+      }
+    },
+    "networkSecurityGroupName": {
+        "type": "string",
+        "metadata": {
+            "description": "Name of the Network Security Group. For example, All Traffic"
+      }
+    },
+    "roleName": {
+        "type": "string",
+        "defaultValue": "[newGuid()]",
+        "metadata": {
+            "description": "Name of the role that will be assigned in Managed Identity. Must be Guid"
+      }
+    },
+    "vmSize": {
+        "type": "string",
+        "defaultValue": "Standard_F2",
+        "metadata": {
+            "description": "Size of the Virtual Machine. Depends on the Location and Availability Set"
+        }
+    },
+    "subnetResourceGroupName":{
+        "type": "string",
+        "metadata": {
+            "description": "Name of the resource group where the Subnet is stored"
+        }
+    },
+    "virtualNetworkName": {
+            "type": "string",
+            "metadata": {
+                "description": "Type existing Virtual Network Name"
+            }
+    },
+    "subnetName": {
+        "type": "string",
+        "metadata": {
+            "description": "Type existing Subnet name"
+        }
+    },
+    "linkToDSBuild": {
+        "type": "string",
+        "metadata": {
+            "description": "Link to DataSunrise Suite build"
+      }
+    },
+    "DSAdminPassword": {
+        "type": "SecureString",
+        "metadata": {
+          "description": "DS admin password"
+      }
+    },
+    "DSLicenseKey": {
+        "type": "String",
+        "metadata": {
+          "description": "DS license key"
+      }
+    },
+    "DictionaryDatabaseType": {
+        "type": "string",
+        "defaultValue": "postgresql",
+        "allowedValues": [
+            "postgresql",
+            "mssql"
+        ],
+        "metadata": {
+            "description": "Type of database to be used as Dictionary and Audit database for DS configuration."
+      }
+    },
+    "DictionaryDatabasePort":{
+        "type": "int",
+         "allowedValues": [
+            5432,
+            1433
+        ],
+        "metadata": {
+            "description": "Dictionary and Audit Database port"
+        }
+    },
+    "DictionaryDatabaseName": {
+        "type": "string",
+        "metadata": {
+            "description": "Dictionary database name. For example, DictionaryDb"
+      }
+    },   
+    "DictionaryDatabaseAdministratorLogin": {
+        "type": "string",
+        "defaultValue": "dsuser",
+        "metadata": {
+            "description": "Administrator login for Dictionary and Audit database servers"
+      }
+    },
+    "DictionaryDatabaseAdministratorLoginPassword": {
+        "minLength": 8,
+        "type": "SecureString",
+        "metadata": {
+            "description": "Administrator password for Dictionary and Audit database servers"
+      }
+    },
+    "DictionaryDatabaseBackupRetentionDays": {
+        "type": "int",
+        "defaultValue": 7,
+        "metadata": {
+            "description": "Dictionary and Audit database servers backup retention days"
+      }
+    },
+    "AuditDatabaseType": {
+        "type": "string",
+        "defaultValue": "postgresql",
+        "allowedValues": [
+            "postgresql",
+            "mssql",
+            "mysql"
+        ],
+        "metadata": {
+            "description": "Type of database to be used as Dictionary and Audit database for DS configuration."
+      }
+    },
+    "AuditDatabasePort":{
+        "type": "int",
+         "allowedValues": [
+            5432,
+            1433,
+            3306
+        ],
+        "metadata": {
+            "description": "Dictionary and Audit Database port"
+        }
+    },
+    "AuditDatabaseName": {
+        "type": "string",
+        "metadata": {
+            "description": "Audit database name. For example, AuditDb"
+      }
+    },
+    "AuditDatabaseAdministratorLogin": {
+        "type": "string",
+        "defaultValue": "dsuser",
+        "metadata": {
+            "description": "Administrator login for Dictionary and Audit database servers"
+      }
+    },
+    "AuditDatabaseAdministratorLoginPassword": {
+        "minLength": 8,
+        "type": "SecureString",
+        "metadata": {
+            "description": "Administrator password for Dictionary and Audit database servers"
+      }
+    },
+    "AuditDatabaseBackupRetentionDays": {
+        "type": "int",
+        "defaultValue": 7,
+        "metadata": {
+            "description": "Dictionary and Audit database servers backup retention days"
+      }
+    },
+    "TargetDBName": {
+        "type": "string",
+        "metadata": {
+            "description": "Target database name. For example, postgres"
+      }
+    },
+    "TargetDBType": {
+        "type": "string",
+        "allowedValues": [
+            "postgresql",
+            "mysql",
+            "mssql",
+            "oracle"
+        ],
+        "metadata": {
+            "description": "Target database type. For example, postgresql"
+      }
+    },
+    "TargetDBHost": {
+        "type": "string",
+        "metadata": {
+            "description": "Target database host. For example, postgresqserver.postgres.database.azure.com"
+      }
+    },
+    "TargetDBPort": {
+        "type": "int",
+        "metadata": {
+            "description": "Target database port. For example, 5432"
+      }
+    },
+    "TargetDBProxyPort": {
+        "type": "int",
+        "metadata": {
+            "description": "Target database proxy port. For example, 5433. Must be greater than the TargetDBPort"
+      }
+    },
+    "TargetDBInstanceName": {
+        "type": "string",
+        "metadata": {
+            "description": "Target database instance name. For example, PostgreSQL"
+      }
+    },
+    "TargetDBLogin": {
+        "type": "string",
+        "metadata": {
+            "description": "Target database login. For example, postgres"
+      }
+    },
+    "TargetDBLoginPassword": {
+        "type": "securestring",
+        "metadata": {
+            "description": "Target database login password"
+      }
+    }
+  },
+  "variables": {
+        "AuditServerName": "[concat('configuration', parameters('AuditDatabaseName'))]",
+        "AuditVNETRule": "AuditRule",
+        "authenticationType": "password",
+        "bePoolName": "[concat(variables('vmScaleSetName'), 'bepool')]",
+        "DictionaryServerName": "[concat('configuration', parameters('DictionaryDatabaseName'))]",
+        "DictionaryVNETRule": "DictionaryRule",
+        "ds_serverName": "ds-",
+        "ds_serverNameScale": "DS_Scale",
+        "imagePublisher": "OpenLogic",
+        "imageOffer": "CentOS",
+        "imageSKU": "7_8",
+        "linuxConfiguration": {
+            "disablePasswordAuthentication": false
+        },
+        "loadBalancerName": "DSLoadBalancer",
+        "location": "[resourceGroup().location]",
+        "managedIdentityName": "User-assigned-identity",
+        "natBackendPort": 11000,
+        "natPoolName": "[concat(variables('vmScaleSetName'), 'natpool')]",
+        "natPool2Name": "[concat(variables('vmScaleSetName'), 'nat2pool')]",
+        "natPool3Name": "[concat(variables('vmScaleSetName'), 'nat3pool')]",
+        "natStartPort": 11000,
+        "natEndPort": 11001,
+        "networkInterfaceName": "[concat(variables('vmNameScale'),'NetInt')]",
+        "publicIPAddressName": "[concat(parameters('dnsLabelPrefix'), '-ip')]",
+        "resourceGroupName": "[resourceGroup().name]",
+        "skuCapacity": 2,
+        "skuFamily": "Gen5",
+        "skuName": "GP_Gen5_2",
+        "skuSize": 640000,
+        "skuTier": "GeneralPurpose",
+        "storageAccountName":"[concat('vhds', uniqueString(resourceGroup().id))]",
+        "subnetRef": "[resourceId(parameters('subnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets/', parameters('virtualNetworkName'), parameters('subnetName'))]",
+        "vmCount": 2,
+        "vmNameScale": "VMScale",
+        "vmScaleSetName": "DSScaleSet"
+    },
+    "resources": [
+    {
+        "type": "Microsoft.Authorization/roleAssignments",
+        "apiVersion": "2018-09-01-preview",
+        "name": "[parameters('roleName')]",
+        "properties": {
+            "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '9980e02c-c2be-4d73-94e8-173b1dc7cf3c')]",
+            "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managedIdentityName')), '2018-11-30').principalId]",
+            "scope": "[resourceGroup().id]",
+            "principalType": "ServicePrincipal"
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managedIdentityName'))]"
+        ]
+    },
+    {
+        "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+        "name": "[variables('managedIdentityName')]",       
+        "apiVersion": "2018-11-30",
+        "location": "[variables('location')]"
+    },
+    {
+        "type": "Microsoft.Network/loadBalancers",
+        "apiVersion": "2020-06-01",
+        "name": "[variables('loadBalancerName')]",
+        "location": "[variables('location')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
+        ],
+        "properties": {
+          "frontendIPConfigurations": [
+            {
+              "name": "LoadBalancerFrontEnd",
+              "properties": {
+                "publicIPAddress": {
+                  "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
+                }
+              }
+            }
+          ],
+          "backendAddressPools": [
+            {
+              "name": "[variables('bePoolName')]"
+            }
+          ],
+          "inboundNatPools": [
+            {
+              "name": "[variables('natPoolName')]",
+              "properties": {
+                "frontendIPConfiguration": {
+                  "id": "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', variables('loadBalancerName'),'loadBalancerFrontEnd')]"
+                },
+                "protocol": "Tcp",
+                "frontendPortRangeStart": "[variables('natStartPort')]",
+                "frontendPortRangeEnd": "[variables('natEndPort')]",
+                "backendPort": "[variables('natBackendPort')]"
+              }
+            },
+            {
+              "name": "[variables('natPool2Name')]",
+              "properties": {
+                "frontendIPConfiguration": {
+                "id": "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', variables('loadBalancerName'),'loadBalancerFrontEnd')]"
+                },
+                "protocol": "Tcp",
+                "frontendPortRangeStart": "[parameters('TargetDBPort')]",
+                "frontendPortRangeEnd": "[parameters('TargetDBProxyPort')]",
+                "backendPort": "[parameters('TargetDBPort')]"
+              }
+            },
+            {
+              "name": "[variables('natPool3Name')]",
+              "properties": {
+                "frontendIPConfiguration": {
+                "id": "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', variables('loadBalancerName'),'loadBalancerFrontEnd')]"
+                },
+                "protocol": "Tcp",
+                "frontendPortRangeStart": 22,
+                "frontendPortRangeEnd": 23,
+                "backendPort": 22
+              }
+            }
+          ]
+        }
+    },
+    {
+        "condition": "[equals(parameters('DictionaryDatabaseType'),'postgresql')]",
+        "name": "[variables('DictionaryServerName')]",
+        "type": "Microsoft.DBforPostgreSQL/servers",
+        "apiVersion": "2017-12-01",
+        "sku": {
+            "name": "[variables('skuName')]",
+            "tier": "[variables('skuTier')]",
+            "capacity": "[variables('skuCapacity')]",
+            "size": "[variables('skuSize')",
+            "family": "[variables('skuFamily')]"
+        },
+        "properties": {
+            "version": "11",
+            "publicNetworkAccess": "Enabled",
+            "sslEnforcement": "Disabled",
+            "storageProfile": {
+                "backupRetentionDays": "[parameters('DictionaryDatabaseBackupRetentionDays')]",
+                "storageMB": "[variables('skuSize')]",
+                "storageAutogrow": "Disabled"
+            },
+            "createMode": "Default",
+            "administratorLogin": "[parameters('DictionaryDatabaseAdministratorLogin')]",
+            "administratorLoginPassword": "[parameters('DictionaryDatabaseAdministratorLoginPassword')]"
+        },
+        "location": "[variables('location')]",
+        "resources": [
+            {
+                "condition": "[equals(parameters('DictionaryDatabaseType'),'postgresql')]",
+                "type": "databases",
+                "name": "[parameters('DictionaryDatabaseName')]",
+                "apiVersion": "2017-12-01",
+                "dependsOn": [
+                    "[variables('DictionaryServerName')]"
+                ],
+                "properties":{
+                    "charset": "UTF8"
+                }
+            },
+            {
+                "condition": "[equals(parameters('DictionaryDatabaseType'),'postgresql')]",
+                "type": "virtualNetworkRules",
+                "name": "[variables('DictionaryVNETRule')]",
+                "apiVersion": "2017-12-01",
+                "dependsOn": [
+                    "[variables('DictionaryServerName')]"
+                ],
+                "properties": {
+                    "virtualNetworkSubnetId": "[variables('subnetRef')]"
+                }
+            }
+        ]
+    },
+    {
+        "condition": "[equals(parameters('AuditDatabaseType'),'postgresql')]",
+        "name": "[variables('AuditServerName')]",
+        "type": "Microsoft.DBforPostgreSQL/servers",
+        "apiVersion": "2017-12-01",
+        "sku": {
+            "name": "[variables('skuName')]",
+            "tier": "[variables('skuTier')]",
+            "capacity": "[variables('skuCapacity')]",
+            "size": "[variables('skuSize')",
+            "family": "[variables('skuFamily')]"
+        },
+        "properties": {
+            "version": "11",
+            "publicNetworkAccess": "Enabled",
+            "sslEnforcement": "Disabled",
+            "storageProfile": {
+                "backupRetentionDays": "[parameters('AuditDatabaseBackupRetentionDays')]",
+                "storageMB": "[variables('skuSize')]",
+                "storageAutogrow": "Disabled"
+            },
+            "createMode": "Default",
+            "administratorLogin": "[parameters('AuditDatabaseAdministratorLogin')]",
+            "administratorLoginPassword": "[parameters('AuditDatabaseAdministratorLoginPassword')]"
+        },
+        "location": "[variables('location')]",
+        "resources": [
+             {
+                "condition": "[equals(parameters('AuditDatabaseType'),'postgresql')]",
+                "type": "databases",
+                "name": "[parameters('AuditDatabaseName')]",
+                "apiVersion": "2017-12-01",
+                "dependsOn": [
+                    "[variables('AuditServerName')]"
+                ],
+                "properties":{
+                    "charset": "UTF8"
+                }
+            },
+            {
+                "condition": "[equals(parameters('AuditDatabaseType'),'postgresql')]",
+                "type": "virtualNetworkRules",
+                "name": "[variables('AuditVNETRule')]",
+                "apiVersion": "2017-12-01",
+                "dependsOn": [
+                    "[variables('AuditServerName')]"
+                ],
+                "properties": {
+                    "virtualNetworkSubnetId": "[variables('subnetRef')]"
+                }
+            }
+        ]
+    },
+      {
+        "condition": "[equals(parameters('DictionaryDatabaseType'),'mssql')]",
+        "name": "[variables('DictionaryServerName')]",
+        "type": "Microsoft.Sql/servers",
+        "apiVersion": "2020-02-02-preview",
+        "sku": {
+            "name": "[variables('skuName')]",
+            "tier": "[variables('skuTier')]",
+            "capacity": "[variables('skuCapacity')]",
+            "size": "[variables('skuSize')",
+            "family": "[variables('skuFamily')]"
+        },
+        "properties": {
+            "publicNetworkAccess": "Enabled",
+            "sslEnforcement": "Disabled",
+            "storageProfile": {
+                "backupRetentionDays": "[parameters('DictionaryDatabaseBackupRetentionDays')]",
+                "storageMB": "[variables('skuSize')]",
+                "storageAutogrow": "Disabled"
+            },
+            "createMode": "Default",
+            "administratorLogin": "[parameters('DictionaryDatabaseAdministratorLogin')]",
+            "administratorLoginPassword": "[parameters('DictionaryDatabaseAdministratorLoginPassword')]"
+        },
+        "location": "[variables('location')]",
+        "resources": [
+            {
+                "condition": "[equals(parameters('DictionaryDatabaseType'),'mssql')]",
+                "type": "databases",
+                "name": "[parameters('DictionaryDatabaseName')]",
+                  "apiVersion": "2020-02-02-preview",
+                  "location": "[variables('location')]",
+                  "dependsOn": [
+                    "[variables('DictionaryServerName')]"
+                ],
+                  "properties":{
+                     "charset": "UTF8"
+                  }
+            },
+            {
+                "condition": "[equals(parameters('DictionaryDatabaseType'),'mssql')]",
+                "type": "virtualNetworkRules",
+                "name": "[variables('DictionaryVNETRule')]",
+                "apiVersion": "2020-02-02-preview",
+                "dependsOn": [
+                    "[variables('DictionaryServerName')]"
+                ],
+                "properties": {
+                    "virtualNetworkSubnetId": "[variables('subnetRef')]"
+                }
+            }
+        ]
+    },
+    {
+        "condition": "[equals(parameters('AuditDatabaseType'),'mssql')]",
+        "name": "[variables('AuditServerName')]",
+        "type": "Microsoft.Sql/servers",
+        "apiVersion": "2020-02-02-preview",
+        "sku": {
+            "name": "[variables('skuName')]",
+            "tier": "[variables('skuTier')]",
+            "capacity": "[variables('skuCapacity')]",
+            "size": "[variables('skuSize')",
+            "family": "[variables('skuFamily')]"
+        },
+        "properties": {
+            "publicNetworkAccess": "Enabled",
+            "sslEnforcement": "Disabled",
+            "storageProfile": {
+                "backupRetentionDays": "[parameters('AuditDatabaseBackupRetentionDays')]",
+                "storageMB": "[variables('skuSize')]",
+                "storageAutogrow": "Disabled"
+            },
+            "createMode": "Default",
+            "administratorLogin": "[parameters('AuditDatabaseAdministratorLogin')]",
+            "administratorLoginPassword": "[parameters('AuditDatabaseAdministratorLoginPassword')]"
+        },
+        "location": "[variables('location')]",
+        "resources": [
+            {
+                "condition": "[equals(parameters('AuditDatabaseType'),'mssql')]",
+                "type": "databases",
+                "name": "[parameters('AuditDatabaseName')]",
+                  "apiVersion": "2020-02-02-preview",
+                  "location": "[variables('location')]",
+                  "dependsOn": [
+                    "[variables('AuditServerName')]"
+                ],
+                  "properties":{
+                     "charset": "UTF8"
+                  }
+            },
+            {
+                "condition": "[equals(parameters('AuditDatabaseType'),'mssql')]",
+                "type": "virtualNetworkRules",
+                "name": "[variables('AuditVNETRule')]",
+                "apiVersion": "2020-02-02-preview",
+                "dependsOn": [
+                    "[variables('AuditServerName')]"
+                ],
+                "properties": {
+                    "virtualNetworkSubnetId": "[variables('subnetRef')]"
+                }
+            }
+        ]
+    },
+    {
+        "condition": "[equals(parameters('AuditDatabaseType'),'mysql')]",
+        "name": "[variables('AuditServerName')]",
+        "type": "Microsoft.DBforMySQL/servers",
+        "apiVersion": "2017-12-01-preview",
+        "sku": {
+            "name": "[variables('skuName')]",
+            "tier": "[variables('skuTier')]",
+            "capacity": "[variables('skuCapacity')]",
+            "size": "[variables('skuSize')",
+            "family": "[variables('skuFamily')]"
+        },
+        "properties": {
+            "publicNetworkAccess": "Enabled",
+            "sslEnforcement": "Disabled",
+            "storageProfile": {
+                "backupRetentionDays": "[parameters('AuditDatabaseBackupRetentionDays')]",
+                "storageMB": "[variables('skuSize')]",
+                "storageAutogrow": "Disabled"
+            },
+            "createMode": "Default",
+            "administratorLogin": "[parameters('AuditDatabaseAdministratorLogin')]",
+            "administratorLoginPassword": "[parameters('AuditDatabaseAdministratorLoginPassword')]"
+        },
+        "location": "[variables('location')]",
+        "resources": [
+            {
+                "condition": "[equals(parameters('AuditDatabaseType'),'mysql')]",
+                "type": "databases",
+                "name": "[parameters('AuditDatabaseName')]",
+                  "apiVersion": "2017-12-01-preview",
+                  "location": "[variables('location')]",
+                  "dependsOn": [
+                    "[variables('AuditServerName')]"
+                ],
+                  "properties":{
+                     "charset": "UTF8"
+                  }
+            },
+            {
+                "condition": "[equals(parameters('AuditDatabaseType'),'mysql')]",
+                "type": "virtualNetworkRules",
+                "name": "[variables('AuditVNETRule')]",
+                "apiVersion": "2017-12-01-preview",
+                "dependsOn": [
+                    "[variables('AuditServerName')]"
+                ],
+                "properties": {
+                    "virtualNetworkSubnetId": "[variables('subnetRef')]"
+                }
+            }
+        ]
+    },
+    {
+        "type": "Microsoft.Storage/storageAccounts",
+        "apiVersion": "2016-01-01",
+        "name": "[variables('storageAccountName')]",
+        "location": "[variables('location')]",
+        "sku": {
+            "name": "Standard_LRS"
+        },
+        "kind": "Storage",
+        "properties": {}
+    },
+    {
+        "type": "Microsoft.Network/publicIpAddresses",
+        "apiVersion": "2020-06-01",
+        "name": "[variables('publicIpAddressName')]",
+        "location": "[variables('location')]",
+        "properties": {
+            "publicIpAllocationMethod": "Dynamic",
+            "publicIPAddressVersion": "IPv4",
+            "dnsSettings": {
+                "domainNameLabel": "[parameters('dnsLabelPrefix')]"
+            },
+            "idleTimeoutInMinutes": 4
+        }
+    },
+    {
+        "type": "Microsoft.Network/networkSecurityGroups",
+        "apiVersion": "2020-06-01",
+        "name": "[parameters('networkSecurityGroupName')]",
+        "location": "[variables('location')]",
+        "properties": {
+            "securityRules": [
+            {
+                "name": "Rule_5432",
+                "properties": {
+                "priority": 900,
+                "protocol": "TCP",
+                "access": "Allow",
+                "direction": "Inbound",
+                "sourceAddressPrefix": "*",
+                "sourcePortRange": "*",
+                "destinationAddressPrefix": "VirtualNetwork",
+                "destinationPortRanges": [
+                    "[parameters('TargetDBPort')]",
+                    "[parameters('TargetDBProxyPort')]"
+                ]                
+            }
+            },
+             {
+                "name": "Rule_11000",
+                "properties": {
+                "priority": 1000,
+                "protocol": "TCP",
+                "access": "Allow",
+                "direction": "Inbound",
+                "sourceAddressPrefix": "*",
+                "sourcePortRange": "*",
+                "destinationAddressPrefix": "VirtualNetwork",
+                "destinationPortRange": 11000                
+            }
+            },
+             {
+                "name": "Rule_22",
+                "properties": {
+                "priority": 1010,
+                "protocol": "TCP",
+                "access": "Allow",
+                "direction": "Inbound",
+                "sourceAddressPrefix": "*",
+                "sourcePortRange": "*",
+                "destinationAddressPrefix": "VirtualNetwork",
+                "destinationPortRange": 22                
+            }
+            },
+            {
+                "name": "Outbound",
+                "properties": {
+                "priority": 1000,
+                "protocol": "TCP",
+                "access": "Allow",
+                "direction": "Outbound",
+                "sourceAddressPrefix": "*",
+                "sourcePortRange": "*",
+                "destinationAddressPrefix": "*",
+                "destinationPortRange": "22"
+            }
+        }
+        ]
+      }
+    },
+    {
+        "type": "Microsoft.Compute/virtualMachineScaleSets",
+          "name": "[variables('vmScaleSetName')]",
+          "apiVersion": "2019-03-01",
+          "location": "[variables('location')]",
+          "identity" : {
+            "type": "userAssigned",
+            "userAssignedIdentities": {
+                "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/',variables('managedIdentityName'))]": {}
+            }
+          },
+          "sku": {
+            "name": "[parameters('vmSize')]",
+            "tier": "Standard",
+            "capacity": "[variables('skuCapacity')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
+                "[resourceId('Microsoft.Network/publicIpAddresses/', variables('publicIpAddressName'))]"
+              ],
+        "properties": {
+           "upgradePolicy": {
+                    "mode": "Automatic"
+                },
+            "overprovision": false,
+            "virtualMachineProfile": {
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "fromImage",
+                            "caching": "ReadWrite"
+                        },
+                        "imageReference": {
+                            "publisher": "[variables('imagePublisher')]",
+                            "offer": "[variables('imageOffer')]",
+                            "sku": "[variables('imageSKU')]",
+                            "version": "latest"
+                        }
+                    },
+                    "osProfile": {
+                        "computerNamePrefix": "[variables('ds_serverName')]",
+                        "computerName": "[variables('vmNameScale')]",
+                        "adminUsername": "[parameters('adminUsername')]",
+                        "adminPassword": "[parameters('adminPassword')]",
+                        "linuxConfiguration": "[if(equals(variables('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
+                    },
+                    "networkProfile": {   
+                         "networkInterfaceConfigurations": [
+                                {
+                                    "name": "[variables('networkInterfaceName')]",
+                                    "properties": {
+                                       "primary": true,
+                                       "ipConfigurations": [
+                                            {
+                                                "name": "ipconfig1",
+                                                "properties": {
+                                                    "subnet": {
+                                                        "id": "[variables('subnetRef')]"
+                                                    },
+                                                    "loadBalancerBackendAddressPools": [
+                                                    {
+                                                        "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('loadBalancerName'), variables('bePoolName'))]"
+                                                    }
+                                                    ],
+                                                    "loadBalancerInboundNatPools": [
+                                                    {
+                                                        "id": "[resourceId('Microsoft.Network/loadBalancers/inboundNatPools', variables('loadBalancerName'), variables('natPoolName'))]"
+                                                    },
+                                                    {
+                                                        "id": "[resourceId('Microsoft.Network/loadBalancers/inboundNatPools', variables('loadBalancerName'), variables('natPool2Name'))]"
+                                                    },
+                                                    {
+                                                        "id": "[resourceId('Microsoft.Network/loadBalancers/inboundNatPools', variables('loadBalancerName'), variables('natPool3Name'))]"
+                                                    }
+                                                    ]                               
+                                                }
+                                            }
+                                        ],
+                                        "networkSecurityGroup": {
+                                            "id": "[resourceId('Microsoft.Network/networkSecurityGroups',parameters('networkSecurityGroupName'))]"
+                                        }
+                              }
+                                }   
+                            ]
+                    },
+                    "extensionProfile": {
+                    "extensions": [
+                    {
+                        "name": "dsinstallScriptScale",
+                        "properties":{
+                            "publisher": "Microsoft.Azure.Extensions",
+                            "type": "CustomScript",
+                            "typeHandlerVersion": "2.1",
+                            "autoUpgradeMinorVersion": true,
+                            "settings": {
+                                "fileUris": [
+                                    "https://raw.githubusercontent.com/Sinki25/azure-template/main/ds_install.sh",
+                                    "https://raw.githubusercontent.com/Sinki25/azure-template/main/ds_remove_servers.sh",
+                                    "https://raw.githubusercontent.com/Sinki25/azure-template/main/install_libraries.sh",
+                                    "https://raw.githubusercontent.com/Sinki25/azure-template/main/ds_setup.sh",
+                                    "https://raw.githubusercontent.com/Sinki25/azure-template/main/ds_pre_setup.sh",
+                                    "https://raw.githubusercontent.com/Sinki25/azure-template/main/ds_params.sh"        
+                                ]
+                            },
+                            "protectedSettings": {
+                                "commandToExecute": "[concat('./ds_install.sh ','ds_params.sh',' ','install_libraries.sh', ' ', concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', resourcegroup().name,'/providers/Microsoft.ManagedIdentity/userAssignedIdentities/',variables('managedIdentityName')),' ','ds_pre_setup.sh',' \"', parameters('linkToDSBuild'),'\" ', 'ds_setup.sh',' ', parameters('DictionaryDatabaseType'), ' ',if(equals(parameters('DictionaryDatabaseType'),'postgresql'),reference(resourceId('Microsoft.DBforPostgreSQL/servers/', variables('DictionaryServerName'))).fullyQualifiedDomainName, if(equals(parameters('DictionaryDatabaseType'), 'mysql'), reference(resourceId('Microsoft.DBforMySQL/servers/', variables('DictionaryServerName'))).fullyQualifiedDomainName, reference(resourceId('Microsoft.Sql/servers/', variables('DictionaryServerName'))).fullyQualifiedDomainName)),' ', parameters('DictionaryDatabasePort'), ' ', parameters('DictionaryDatabaseName'), ' ', concat(parameters('DictionaryDatabaseAdministratorLogin'),'@',if(equals(parameters('DictionaryDatabaseType'),'postgresql'),reference(resourceId('Microsoft.DBforPostgreSQL/servers/', variables('DictionaryServerName'))).fullyQualifiedDomainName,if(equals(parameters('DictionaryDatabaseType'), 'mysql'), reference(resourceId('Microsoft.DBforMySQL/servers/', variables('DictionaryServerName'))).fullyQualifiedDomainName,reference(resourceId('Microsoft.Sql/servers/', variables('DictionaryServerName'))).fullyQualifiedDomainName))),' ', parameters('DictionaryDatabaseAdministratorLoginPassword'), ' ', parameters('AuditDatabaseType'), ' ', if(equals(parameters('AuditDatabaseType'),'postgresql'),reference(resourceId('Microsoft.DBforPostgreSQL/servers/', variables('AuditServerName'))).fullyQualifiedDomainName, if(equals(parameters('AuditDatabaseType'), 'mysql'), reference(resourceId('Microsoft.DBforMySQL/servers/', variables('AuditServerName'))).fullyQualifiedDomainName, reference(resourceId('Microsoft.Sql/servers/', variables('AuditServerName'))).fullyQualifiedDomainName)),' ', parameters('AuditDatabasePort'), ' ', parameters('AuditDatabaseName'), ' ', concat(parameters('AuditDatabaseAdministratorLogin'),'@',if(equals(parameters('AuditDatabaseType'),'postgresql'),reference(resourceId('Microsoft.DBforPostgreSQL/servers/', variables('AuditServerName'))).fullyQualifiedDomainName,if(equals(parameters('AuditDatabaseType'), 'mysql'), reference(resourceId('Microsoft.DBforMySQL/servers/', variables('AuditServerName'))).fullyQualifiedDomainName,reference(resourceId('Microsoft.Sql/servers/', variables('AuditServerName'))).fullyQualifiedDomainName))), ' ', parameters('AuditDatabaseAdministratorLoginPassword'), ' ', variables('AuditServerName'), ' ', variables('ds_serverName'), ' ', parameters('dsAdminPassword'),' ', 'ds_remove_servers.sh', ' ', parameters('DSLicenseKey'), ' ',parameters('TargetDBInstanceName'),' ',parameters('TargetDBPort'),' ', parameters('TargetDBType'),' ',parameters('TargetDBHost'),' ', parameters('TargetDBName'),' ', parameters('TargetDBLogin'),' ', parameters('TargetDBLoginPassword'),' ', parameters('TargetDBProxyPort'),' ',variables('vmCount'),' ', variables('resourceGroupName'),' ',variables('vmScaleSetName'))]"                            
+                            }
+                        }
+                    }
+                    ]  
+                }
+            }
+        }
+    },
+    {
+        "type": "microsoft.insights/autoscalesettings",
+        "name": "DSAutoScaleSettings",
+        "apiVersion": "2015-04-01",
+        "location": "[variables('location')]",
+        "dependsOn": [
+            "[resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('vmScaleSetName'))]"
+        ],
+        "properties": {
+            "name": "DSAutoScaleSettings",
+            "profiles": [
+              {
+                  "name": "vmAutoScale",
+                  "capacity": {
+                      "minimum": "2",
+                      "maximum": "2",
+                      "default": "[variables('vmCount')]"
+                  },
+                  "rules": [
+                  ]
+              }
+            ],
+            "enabled": true,
+            "targetResourceUri": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('vmScaleSetName'))]"
+        }
+    }
+  ]
+}
