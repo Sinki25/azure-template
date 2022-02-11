@@ -34,11 +34,19 @@ resetAudit() {
 
 if [ "$3" == 2 ]; then
 
+  echo "$3"
+
   az login --identity -u $9
+
+  echo "$9"
 
   az mysql server configuration set --name log_bin_trust_function_creators --resource-group ${10} --server ${11} --value ON
 
+  echo "${10} ${11} ${12}"
+
 fi
+
+echo "$3"
 
 cd /opt/datasunrise
 
