@@ -126,7 +126,7 @@ elif [ "$audit_type" == "mysql" ]; then
   
 fi
 
-resetAudit $ds_root $AF_HOME $AuditType $audit_database_host $audit_database_port $audit_database_name $audit_database_login $audit_database_password $identity $resource_group_name  
+resetAudit $ds_root $AF_HOME $AuditType $audit_database_host $audit_database_port $audit_database_name $audit_database_login $audit_database_password $identity $resource_group_name $audit_server_name
 
 RETVAL1=$?
 
