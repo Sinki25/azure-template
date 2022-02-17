@@ -274,7 +274,7 @@
       "type": "Microsoft.KeyVault/vaults",
       "apiVersion": "2021-04-01-preview",
       "name": "[variables('keyVaultName')]",
-      "location": "[parameters('location')]",
+      "location": "[variables('location')]",
       "properties": {
         "enabledForDeployment": true,
         "enabledForDiskEncryption": true,
