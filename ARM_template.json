@@ -282,7 +282,7 @@
         "tenantId": "[variables('tenantId')]",
         "accessPolicies": [
           {
-            "objectId": "[reference(concat('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managedIdentityName')).principalId)]",
+            "objectId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managedIdentityName')), '2018-11-30').principalId]",
             "tenantId": "[variables('tenantId')]",
             "permissions": {
               "keys": "[variables('keysPermissions')]",
