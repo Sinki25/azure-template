@@ -300,17 +300,17 @@
         }
       }
     },
-    {
-      "type": "Microsoft.KeyVault/vaults/secrets",
-      "apiVersion": "2021-04-01-preview",
-      "name": "[format('{0}/{1}', parameters('keyVaultName'), parameters('secretName'))]",
-      "properties": {
-        "value": "[parameters('secretValue')]"
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
-      ]
-    },
+    //{
+      //"type": "Microsoft.KeyVault/vaults/secrets",
+      //"apiVersion": "2021-04-01-preview",
+      //"name": "[format('{0}/{1}', parameters('keyVaultName'), parameters('secretName'))]",
+      //"properties": {
+        //"value": "[parameters('secretValue')]"
+      //},
+      //"dependsOn": [
+        //"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+      //]
+    //},
     {
         "type": "Microsoft.Authorization/roleAssignments",
         "apiVersion": "2018-09-01-preview",
