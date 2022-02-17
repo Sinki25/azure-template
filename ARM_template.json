@@ -270,23 +270,23 @@
         "vmScaleSetName": "DSScaleSet"
     },
     "resources": [
-    {
+        {
       "type": "Microsoft.KeyVault/vaults",
       "apiVersion": "2021-04-01-preview",
       "name": "[variables('keyVaultName')]",
       "location": "[parameters('location')]",
       "properties": {
         "enabledForDeployment": true,
-        "enabledForDiskEncryption": "[parameters('enabledForDiskEncryption')]",
-        "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
-        "tenantId": "[parameters('tenantId')]",
+        "enabledForDiskEncryption": true,
+        "enabledForTemplateDeployment": true,
+        "tenantId": "[variables('tenantId')]",
         "accessPolicies": [
           {
-            "objectId": "[parameters('objectId')]",
-            "tenantId": "[parameters('tenantId')]",
+            "objectId": "[reference(concat('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managedIdentityName')).principalId)]",
+            "tenantId": "[variables('tenantId')]",
             "permissions": {
-              "keys": "[parameters('keysPermissions')]",
-              "secrets": "[parameters('secretsPermissions')]"
+              "keys": "[variables('keysPermissions')]",
+              "secrets": "[variables('secretsPermissions')]"
             }
           }
         ],
