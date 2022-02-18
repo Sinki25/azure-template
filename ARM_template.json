@@ -265,6 +265,7 @@
         "skuTier": "GeneralPurpose",
         "storageAccountName":"[concat('vhds', uniqueString(resourceGroup().id))]",
         "subnetRef": "[resourceId(parameters('subnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets/', parameters('virtualNetworkName'), parameters('subnetName'))]",
+        "tenantId": "[subscription().tenantId]",
         "vmCount": 2,
         "vmNameScale": "VMScale",
         "vmScaleSetName": "DSScaleSet"
