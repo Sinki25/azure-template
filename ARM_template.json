@@ -242,7 +242,7 @@
         "imagePublisher": "OpenLogic",
         "imageOffer": "CentOS",
         "imageSKU": "7_8",
-        "keysPermissions": "list",
+        "keysPermissions": ["list"],
         "keyVaultName": "DSKeyVault",
         "linuxConfiguration": {
             "disablePasswordAuthentication": false
