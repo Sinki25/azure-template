@@ -242,6 +242,7 @@
         "imagePublisher": "OpenLogic",
         "imageOffer": "CentOS",
         "imageSKU": "7_8",
+        "keysPermissions": "list",
         "keyVaultName": "DSKeyVault",
         "linuxConfiguration": {
             "disablePasswordAuthentication": false
@@ -258,6 +259,7 @@
         "networkInterfaceName": "[concat(variables('vmNameScale'),'NetInt')]",
         "publicIPAddressName": "[concat(parameters('dnsLabelPrefix'), '-ip')]",
         "resourceGroupName": "[resourceGroup().name]",
+        "secretsPermissions": "list",
         "skuCapacity": 2,
         "skuFamily": "Gen5",
         "skuName": "GP_Gen5_2",
@@ -292,7 +294,7 @@
           }
         ],
         "sku": {
-          "name": "[parameters('skuName')]",
+          "name": "[variables('skuName')]",
           "family": "A"
         },
         "networkAcls": {
