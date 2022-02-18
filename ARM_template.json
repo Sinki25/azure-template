@@ -294,7 +294,7 @@
           }
         ],
         "sku": {
-          "name": "[variables('skuName')]",
+          "name": "Standard",
           "family": "A"
         },
         "networkAcls": {
