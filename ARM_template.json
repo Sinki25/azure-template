@@ -259,7 +259,7 @@
         "networkInterfaceName": "[concat(variables('vmNameScale'),'NetInt')]",
         "publicIPAddressName": "[concat(parameters('dnsLabelPrefix'), '-ip')]",
         "resourceGroupName": "[resourceGroup().name]",
-        "secretsPermissions": "list",
+        "secretsPermissions": ["list"],
         "skuCapacity": 2,
         "skuFamily": "Gen5",
         "skuName": "GP_Gen5_2",
