@@ -14,11 +14,11 @@
             "description": "Linux VM User Password"
       }
     },
-     "dnsLabelPrefix": {
-        "defaultValue": "linuxdefault",
+     "deploymentPrefix": {
+        "defaultValue": "DS",
         "type": "String",
         "metadata": {
-            "description": "DNS Label for the Public IP. It must be lowercase and must match the following regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$."
+            "description": "Deployment name for this configuration"
       }
     },
     "networkSecurityGroupName": {
@@ -27,7 +27,14 @@
             "description": "Name of the Network Security Group. For example, All Traffic"
       }
     },
-    "roleName": {
+    "roleName1": {
+        "type": "string",
+        "defaultValue": "[newGuid()]",
+        "metadata": {
+            "description": "Name of the role that will be assigned in Managed Identity. Must be Guid"
+      }
+    },
+    "roleName2": {
         "type": "string",
         "defaultValue": "[newGuid()]",
         "metadata": {
@@ -237,6 +244,7 @@
         "bePoolName": "[concat(variables('vmScaleSetName'), 'bepool')]",
         "DictionaryServerName": "[concat('configuration', parameters('DictionaryDatabaseName'))]",
         "DictionaryVNETRule": "DictionaryRule",
+        "dnsLabelPrefix": "[concat(parameters('deploymentPrefix'),'linuxdefault')]",
         "ds_serverName": "ds-",
         "ds_serverNameScale": "DS_Scale",
         "imagePublisher": "OpenLogic",
@@ -257,7 +265,7 @@
         "natStartPort": 11000,
         "natEndPort": 11001,
         "networkInterfaceName": "[concat(variables('vmNameScale'),'NetInt')]",
-        "publicIPAddressName": "[concat(parameters('dnsLabelPrefix'), '-ip')]",
+        "publicIPAddressName": "[concat(variables('dnsLabelPrefix'), '-ip')]",
         "resourceGroupName": "[resourceGroup().name]",
         "secretsPermissions": ["list"],
         "skuCapacity": 2,
@@ -313,6 +321,21 @@
       "dependsOn": [
         "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
       ]
+    },
+    {
+        "type": "Microsoft.Authorization/roleAssignments",
+        "apiVersion": "2018-09-01-preview",
+        "name": "[parameters('roleName')]",
+        "properties": {
+            //"roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '6d8ee4ec-f05a-4a1d-8b00-a9b17e38b437')]",
+            "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+            "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managedIdentityName')), '2018-11-30').principalId]",
+            "scope": "[resourceGroup().id]",
+            "principalType": "ServicePrincipal"
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managedIdentityName'))]"
+        ]
     },
     {
         "type": "Microsoft.Authorization/roleAssignments",
@@ -684,7 +707,7 @@
             "publicIpAllocationMethod": "Dynamic",
             "publicIPAddressVersion": "IPv4",
             "dnsSettings": {
-                "domainNameLabel": "[parameters('dnsLabelPrefix')]"
+                "domainNameLabel": "[variables('dnsLabelPrefix')]"
             },
             "idleTimeoutInMinutes": 4
         }
