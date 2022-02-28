@@ -62,6 +62,8 @@ logBeginAct "Pre_setup execution"
 
 install_product $link_to_DS_build
 
+az keyvault secret show --name dsSecretAdminPassword --vault-name $key_vault_name --query value --output tsv
+
 RETVAL=$?
 
 logEndAct "Exit code after installation - $RETVAL"
