@@ -342,8 +342,7 @@
         "apiVersion": "2018-09-01-preview",
         "name": "[parameters('roleName2')]",
         "properties": {
-            //"roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '6d8ee4ec-f05a-4a1d-8b00-a9b17e38b437')]",
-            "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+            "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'f25e0fa2-a7c8-4377-a976-54943a77a395')]",
             "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managedIdentityName')), '2018-11-30').principalId]",
             "scope": "[resourceGroup().id]",
             "principalType": "ServicePrincipal"
