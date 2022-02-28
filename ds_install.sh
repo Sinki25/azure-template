@@ -20,6 +20,7 @@ audit_server_name=${19}
 ds_server_name=${20}
 key_vault_name=${21}
 ds_admin_password=`az keyvault secret show --name dsSecretAdminPassword --vault-name $key_vault_name --query value --output tsv`
+echo $ds_admin_password
 ds_remove_servers="/var/lib/waagent/custom-script/download/1/${22}"
 ds_license=${23}
 instance_name=${24}
