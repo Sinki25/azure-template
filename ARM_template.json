@@ -251,7 +251,7 @@
         "imageOffer": "CentOS",
         "imageSKU": "7_8",
         "keysPermissions": ["list"],
-        "keyVaultName": "[concat(parameters('deploymentPrefix'), 'KeyVault']",
+        "keyVaultName": "[concat(parameters('deploymentPrefix'), 'KeyVault')]",
         "linuxConfiguration": {
             "disablePasswordAuthentication": false
         },
