@@ -27,14 +27,7 @@
             "description": "Name of the Network Security Group. For example, All Traffic"
       }
     },
-    "roleName1": {
-        "type": "string",
-        "defaultValue": "[newGuid()]",
-        "metadata": {
-            "description": "Name of the role that will be assigned in Managed Identity. Must be Guid"
-      }
-    },
-    "roleName2": {
+    "roleName": {
         "type": "string",
         "defaultValue": "[newGuid()]",
         "metadata": {
@@ -250,7 +243,7 @@
         "imagePublisher": "OpenLogic",
         "imageOffer": "CentOS",
         "imageSKU": "7_8",
-        "keysPermissions": ["list"],
+        "keysPermissions": ["get"],
         "keyVaultName": "[concat(parameters('deploymentPrefix'), 'KeyVault')]",
         "linuxConfiguration": {
             "disablePasswordAuthentication": false
@@ -267,7 +260,7 @@
         "networkInterfaceName": "[concat(variables('vmNameScale'),'NetInt')]",
         "publicIPAddressName": "[concat(variables('dnsLabelPrefix'), '-ip')]",
         "resourceGroupName": "[resourceGroup().name]",
-        "secretsPermissions": ["list"],
+        "secretsPermissions": ["get"],
         "skuCapacity": 2,
         "skuFamily": "Gen5",
         "skuName": "GP_Gen5_2",
@@ -294,10 +287,18 @@
         "accessPolicies": [
           {
             "objectId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managedIdentityName')), '2018-11-30').principalId]",
+            //"objectId": "[subscription().subscriptionId]",
             "tenantId": "[variables('tenantId')]",
             "permissions": {
               "keys": "[variables('keysPermissions')]",
-              "secrets": "[variables('secretsPermissions')]"
+              "secrets": [
+                    "set",
+                    "get",
+                    "list",
+                    "purge",
+                    "delete",
+                    "recover"
+                ]
             }
           }
         ],
@@ -325,24 +326,10 @@
     {
         "type": "Microsoft.Authorization/roleAssignments",
         "apiVersion": "2018-09-01-preview",
-        "name": "[parameters('roleName1')]",
+        "name": "[parameters('roleName')]",
         "properties": {
             //"roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '6d8ee4ec-f05a-4a1d-8b00-a9b17e38b437')]",
             "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
-            "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managedIdentityName')), '2018-11-30').principalId]",
-            "scope": "[resourceGroup().id]",
-            "principalType": "ServicePrincipal"
-        },
-        "dependsOn": [
-          "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managedIdentityName'))]"
-        ]
-    },
-    {
-        "type": "Microsoft.Authorization/roleAssignments",
-        "apiVersion": "2018-09-01-preview",
-        "name": "[parameters('roleName2')]",
-        "properties": {
-            "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'f25e0fa2-a7c8-4377-a976-54943a77a395')]",
             "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managedIdentityName')), '2018-11-30').principalId]",
             "scope": "[resourceGroup().id]",
             "principalType": "ServicePrincipal"
