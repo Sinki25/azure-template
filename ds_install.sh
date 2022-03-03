@@ -19,8 +19,6 @@ audit_database_password=${18}
 audit_server_name=${19}
 ds_server_name=${20}
 key_vault_name=${21}
-#ds_admin_password=`az keyvault secret show --name dsSecretAdminPassword --vault-name $key_vault_name --query value --output tsv`
-echo $ds_admin_password
 ds_remove_servers="/var/lib/waagent/custom-script/download/1/${22}"
 ds_license=${23}
 instance_name=${24}
@@ -29,11 +27,10 @@ target_db_type=${26}
 target_db_host=${27}
 target_database=${28}
 target_db_login=${29}
-target_db_password=${30}
-target_proxy_port=${31}
-vm_count=${32}
-resource_group_name=${33}
-vm_scale_set_name=${34}
+target_proxy_port=${30}
+vm_count=${31}
+resource_group_name=${32}
+vm_scale_set_name=${33}
 ds_root='/opt/datasunrise'
 AF_HOME=$ds_root
 AF_CONFIG=$AF_HOME
@@ -179,6 +176,8 @@ fi
 checkInstanceExists $ds_root 
 
 echo $instanceExists
+
+target_db_password=`az keyvault secret show --name dsSecretTargetAdminPassword --vault-name $key_vault_name --query value --output tsv`
 
 if [ "$instanceExists" == "0" ]; then
   
