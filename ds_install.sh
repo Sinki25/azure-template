@@ -9,28 +9,27 @@ dictionary_database_host=$8
 dictionary_database_port=$9
 dictionary_name=${10}
 dictionary_database_login=${11}
-dictionary_database_password=${12}
-audit_type=${13}
-audit_database_host=${14}
-audit_database_port=${15}
-audit_database_name=${16}
-audit_database_login=${17}
-audit_database_password=${18}
-audit_server_name=${19}
-ds_server_name=${20}
-key_vault_name=${21}
-ds_remove_servers="/var/lib/waagent/custom-script/download/1/${22}"
-ds_license=${23}
-instance_name=${24}
-target_db_port=${25}
-target_db_type=${26}
-target_db_host=${27}
-target_database=${28}
-target_db_login=${29}
-target_proxy_port=${30}
-vm_count=${31}
-resource_group_name=${32}
-vm_scale_set_name=${33}
+audit_type=${12}
+audit_database_host=${13}
+audit_database_port=${14}
+audit_database_name=${15}
+audit_database_login=${16}
+audit_database_password=${17}
+audit_server_name=${18}
+ds_server_name=${19}
+key_vault_name=${20}
+ds_remove_servers="/var/lib/waagent/custom-script/download/1/${21}"
+ds_license=${22}
+instance_name=${23}
+target_db_port=${24}
+target_db_type=${25}
+target_db_host=${26}
+target_database=${27}
+target_db_login=${28}
+target_proxy_port=${29}
+vm_count=${30}
+resource_group_name=${31}
+vm_scale_set_name=${32}
 ds_root='/opt/datasunrise'
 AF_HOME=$ds_root
 AF_CONFIG=$AF_HOME
@@ -65,15 +64,7 @@ RETVAL=$?
 
 logEndAct "Exit code after installation - $RETVAL"
 
-#curl https://packages.microsoft.com/config/rhel/8/prod.repo > /etc/yum.repos.d/mssql-release.repo
-
-#sudo yum remove unixODBC-utf16 unixODBC-utf16-devel 
-
-#sudo ACCEPT_EULA=Y yum install msodbcsql17 -y
-
-#sudo yum install unixODBC-devel -y
-
-#echo "mssql driver was updated successfully" >> /home/test.txt
+dictionary_database_password=`az keyvault secret show --name dsSecretDictionaryAdminPassword --vault-name $key_vault_name --query value --output tsv`
 
 logBeginAct "DS_setup execution"
 
