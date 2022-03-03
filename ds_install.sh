@@ -14,22 +14,21 @@ audit_database_host=${13}
 audit_database_port=${14}
 audit_database_name=${15}
 audit_database_login=${16}
-audit_database_password=${17}
-audit_server_name=${18}
-ds_server_name=${19}
-key_vault_name=${20}
-ds_remove_servers="/var/lib/waagent/custom-script/download/1/${21}"
-ds_license=${22}
-instance_name=${23}
-target_db_port=${24}
-target_db_type=${25}
-target_db_host=${26}
-target_database=${27}
-target_db_login=${28}
-target_proxy_port=${29}
-vm_count=${30}
-resource_group_name=${31}
-vm_scale_set_name=${32}
+audit_server_name=${17}
+ds_server_name=${18}
+key_vault_name=${19}
+ds_remove_servers="/var/lib/waagent/custom-script/download/1/${20}"
+ds_license=${21}
+instance_name=${22}
+target_db_port=${23}
+target_db_type=${24}
+target_db_host=${25}
+target_database=${26}
+target_db_login=${27}
+target_proxy_port=${28}
+vm_count=${29}
+resource_group_name=${30}
+vm_scale_set_name=${31}
 ds_root='/opt/datasunrise'
 AF_HOME=$ds_root
 AF_CONFIG=$AF_HOME
@@ -84,19 +83,7 @@ if [ "$RETVAL" == "93" ]; then
 
 fi
 
-#printf "%q\n" "$dictionary_type"
-
-#if [ "$dictionary_type" == "postgresql"]; then
-
- # AuditType=1
-  
-  #echo $AuditType
-  
-#elif [ "$dictionary_type" == "mssql"]; then
-
- # AuditType=6
-  
-#fi
+audit_database_password=`az keyvault secret show --name dsSecretAuditAdminPassword --vault-name $key_vault_name --query value --output tsv`
 
 if [ "$audit_type" == "postgresql" ]; then
 

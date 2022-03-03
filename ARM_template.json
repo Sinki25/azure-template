@@ -346,6 +346,17 @@
       ]
     },
     {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2021-04-01-preview",
+      "name": "[concat(variables('keyVaultName'), '/dsSecretAuditAdminPassword')]",
+      "properties": {
+        "value": "[parameters('AuditDatabaseAdministratorLoginPassword')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+      ]
+    },
+    {
         "type": "Microsoft.Authorization/roleAssignments",
         "apiVersion": "2018-09-01-preview",
         "name": "[parameters('roleName')]",
