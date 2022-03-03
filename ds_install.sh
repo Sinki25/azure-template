@@ -18,17 +18,16 @@ audit_server_name=${17}
 ds_server_name=${18}
 key_vault_name=${19}
 ds_remove_servers="/var/lib/waagent/custom-script/download/1/${20}"
-ds_license=${21}
-instance_name=${22}
-target_db_port=${23}
-target_db_type=${24}
-target_db_host=${25}
-target_database=${26}
-target_db_login=${27}
-target_proxy_port=${28}
-vm_count=${29}
-resource_group_name=${30}
-vm_scale_set_name=${31}
+instance_name=${21}
+target_db_port=${22}
+target_db_type=${23}
+target_db_host=${24}
+target_database=${25}
+target_db_login=${26}
+target_proxy_port=${27}
+vm_count=${28}
+resource_group_name=${29}
+vm_scale_set_name=${30}
 ds_root='/opt/datasunrise'
 AF_HOME=$ds_root
 AF_CONFIG=$AF_HOME
@@ -120,6 +119,8 @@ logBeginAct "Datasunrise Suite was successfully started"
 logBeginAct "Setting up license..."
 
 ds_connect $ds_admin_password
+
+ds_license=`az keyvault secret show --name dsSecretLicenseKey --vault-name $key_vault_name --query value --output tsv`
 
 echo $ds_license
 
