@@ -271,7 +271,8 @@
         "tenantId": "[subscription().tenantId]",
         "vmCount": 2,
         "vmNameScale": "VMScale",
-        "vmScaleSetName": "DSScaleSet"
+        "vmScaleSetName": "DSScaleSet",
+        "vmAutoScaleSettings": "DSAutoScaleSettings"
     },
     "resources": [
         {
@@ -922,14 +923,14 @@
     },
     {
         "type": "microsoft.insights/autoscalesettings",
-        "name": "DSAutoScaleSettings",
+        "name": "[variables('vmAutoScaleSettings')]",
         "apiVersion": "2015-04-01",
         "location": "[variables('location')]",
         "dependsOn": [
             "[resourceId('Microsoft.Compute/virtualMachineScaleSets', variables('vmScaleSetName'))]"
         ],
         "properties": {
-            "name": "DSAutoScaleSettings",
+            "name": "[variables('vmAutoScaleSettings')]",
             "profiles": [
               {
                   "name": "vmAutoScale",
