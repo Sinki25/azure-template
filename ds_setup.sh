@@ -2,6 +2,8 @@ resetDict() {
 
   cd /opt/datasunrise
 
+  host=`hostname -i`
+
   sudo LD_LIBRARY_PATH="$1":"$1/lib":$LD_LIBRARY_PATH AF_HOME="$2" AF_CONFIG="$2" $1/AppBackendService CLEAN_LOCAL_SETTINGS \
   DICTIONARY_TYPE=$3 \
   DICTIONARY_HOST=$4 \
@@ -10,7 +12,7 @@ resetDict() {
   DICTIONARY_LOGIN=$7 \
   DICTIONARY_PASS=$8 \
   FIREWALL_SERVER_NAME=`hostname` \
-  FIREWALL_SERVER_HOST=`hostname -i` \
+  FIREWALL_SERVER_HOST=$host \
   FIREWALL_SERVER_BACKEND_PORT=11000 \
   FIREWALL_SERVER_CORE_PORT=11001 \
   FIREWALL_SERVER_BACKEND_HTTPS=1 \
