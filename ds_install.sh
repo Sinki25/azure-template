@@ -185,7 +185,7 @@ if [ "$instanceExists" == "0" ]; then
  setupProxy $instance_name $target_db_port $target_db_type $target_db_host $target_database $target_db_login $target_db_password $target_proxy_port
  ds_connect $ds_admin_password 
  echo "$RETVAL"
- setupCleaningTask $RETVAL
+ setupCleaningTask $RETVAL $ds_root
   
 else
   
