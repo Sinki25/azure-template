@@ -24,11 +24,11 @@ resetAdminPassword() {
 
   logBeginAct "Reset Admin Password..."
 
-   sudo LD_LIBRARY_PATH="$1":"$1/lib":$LD_LIBRARY_PATH AF_HOME="$2" AF_CONFIG="$2" $1/AppBackendService SET_ADMIN_PASSWORD=$3
+  sudo LD_LIBRARY_PATH="$1":"$1/lib":$LD_LIBRARY_PATH AF_HOME="$2" AF_CONFIG="$2" $1/AppBackendService SET_ADMIN_PASSWORD=$3
    
-   RETVAL1=$?
+  RETVAL1=$?
    
-   logEndAct "Reset DS Admin Password result - $RETVAL1"
+  logEndAct "Reset DS Admin Password result - $RETVAL1"
   
  }
 
@@ -173,4 +173,17 @@ copyProxies() {
   
   logEndAct "Proxies copied."
                
+}
+
+ setupCleaningTask() {
+                    
+    logBeginAct "Set node cleaning task..."
+                    
+    if [ "$1" == 0 ]; then
+      local CLEANING_PT_JSON="{\"id\":-1,\"storePeriodType\":0,\"storePeriodValue\":0,\"name\":\"aws_remove_servers\",\"type\":18,\"lastExecTime\":\"\",\"nextExecTime\":\"\",\"lastSuccessTime\":\"\",\"lastErrorTime\":\"\",\"serverID\":0,\"forceUpdate\":false,\"params\":{},\"frequency\":{\"minutes\":{\"beginDate\":\"2018-09-28 00:00:00\",\"repeatEvery\":10}},\"updateNextExecTime\":true}" 
+      $DSROOT/cmdline/executecommand.sh arbitrary -function updatePeriodicTask -jsonContent "$CLEANING_PT_JSON"
+      RETVAL=$?
+    fi
+    
+    logEndAct "Set node cleaning task - $RETVAL"
 }
