@@ -183,7 +183,9 @@ if [ "$instanceExists" == "0" ]; then
  logBeginAct "Create proxy..."
  ds_connect $ds_admin_password 
  setupProxy $instance_name $target_db_port $target_db_type $target_db_host $target_database $target_db_login $target_db_password $target_proxy_port
- #setupCleaningTask
+ ds_connect $ds_admin_password 
+ echo "$RETVAL"
+ setupCleaningTask $RETVAL
   
 else
   
