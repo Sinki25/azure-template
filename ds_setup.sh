@@ -161,8 +161,11 @@ copyProxies() {
       
      # echo "No Instances found. Will copy."
    service datasunrise stop
+
    sudo LD_LIBRARY_PATH="$1":"$1/lib":$LD_LIBRARY_PATH AF_HOME="$2" AF_CONFIG="$2" $1/AppBackendService COPY_PROXIES
+
    sudo LD_LIBRARY_PATH="$1":"$1/lib":$LD_LIBRARY_PATH AF_HOME="$2" AF_CONFIG="$2" $1/AppBackendService COPY_TRAILINGS
+
    service datasunrise start
    #sleep 10
       #break
@@ -180,12 +183,33 @@ copyProxies() {
     logBeginAct "Set node cleaning task..."
                     
     if [ "$1" == 0 ]; then
+      
       local CLEANING_PT_JSON="{\"id\":-1,\"storePeriodType\":0,\"storePeriodValue\":0,\"name\":\"aws_remove_servers\",\"type\":18,\"lastExecTime\":\"\",\"nextExecTime\":\"\",\"lastSuccessTime\":\"\",\"lastErrorTime\":\"\",\"serverID\":0,\"forceUpdate\":false,\"params\":{},\"frequency\":{\"minutes\":{\"beginDate\":\"2018-09-28 00:00:00\",\"repeatEvery\":10}},\"updateNextExecTime\":true}" 
+      
       echo "$CLEANING_PT_JSON"
 
       "$2"/cmdline/executecommand.sh arbitrary -function updatePeriodicTask -jsonContent "$CLEANING_PT_JSON"
+      
       RETVAL=$?
+
     fi
     
     logEndAct "Set node cleaning task - $RETVAL"
+}
+
+runCleaningTask() {
+                    
+    logBeginAct "Run node cleaning task..."
+                    
+    if [ "$1" == 0 ]; then
+      
+      local EC2_CLEANING_TASK_ID=`$DSROOT/cmdline/executecommand.sh arbitrary -function getPeriodicTaskList -jsonContent "{taskTypes:[18]}" | python -c "import sys, json; print json.load(sys.stdin)['data'][1][0]"`
+      
+      "$2"/cmdline/executecommand.sh arbitrary -function executePeriodicTaskManually -jsonContent "{id:$EC2_CLEANING_TASK_ID}"
+      
+      RETVAL=$?
+    
+    fi
+    
+    logEndAct "Run node cleaning task - $RETVAL"
 }

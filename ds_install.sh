@@ -181,19 +181,34 @@ target_db_password=`az keyvault secret show --name dsSecretTargetAdminPassword -
 if [ "$instanceExists" == "0" ]; then
   
  logBeginAct "Create proxy..."
+
  ds_connect $ds_admin_password 
+
  setupProxy $instance_name $target_db_port $target_db_type $target_db_host $target_database $target_db_login $target_db_password $target_proxy_port
+
  ds_connect $ds_admin_password
+
  RETVAL_LOGIN=$?
+
  echo "$RETVAL_LOGIN"
+
  setupCleaningTask $RETVAL_LOGIN $ds_root
   
 else
   
  logBeginAct "Copy proxy..."
+
  ds_connect $ds_admin_password 
+
  copyProxies $ds_root $AF_HOME
- #runCleaningTask
+
+ ds_connect $ds_admin_password
+
+ RETVAL_LOGIN=$?
+
+ echo "$RETVAL_LOGIN"
+
+ runCleaningTask
 
  #logBeginAct "DS_remove_servers execution"
 
@@ -216,23 +231,3 @@ else
 #logBeginAct "The odd servers were successfully removed"
 
 fi
-
-#logBeginAct "DS_remove_servers execution"
-
-#ds_connect $ds_admin_password
-
-#RETVAL1=$?
-
-#logEndAct "Exit code after connection attempt - $RETVAL1"
-
-#ds_showservers
-
-#RETVAL1=$?
-
-#logEndAct "Exit code after showDsServers - $RETVAL1"
-
-#get_ds_servers_list $vm_count $resource_group_name $vm_scale_set_name
-
-#remove_odd_servers
-
-#logBeginAct "The odd servers were successfully removed"
