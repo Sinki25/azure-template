@@ -208,7 +208,7 @@ else
 
  echo "$RETVAL_LOGIN"
 
- runCleaningTask
+ runCleaningTask $RETVAL_LOGIN $ds_root
 
  #logBeginAct "DS_remove_servers execution"
 
