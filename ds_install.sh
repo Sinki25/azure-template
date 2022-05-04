@@ -163,7 +163,7 @@ if [ "$instanceExists" == "0" ]; then
 
  ds_connect $ds_admin_password 
 
- setupProxy $instance_name $target_db_port $target_db_type $target_db_host $target_database $target_db_login $target_db_password $target_proxy_port
+ setupProxy $instance_name $target_db_port $target_db_type $target_db_host $target_database $target_db_login $target_db_password $target_proxy_port $key_vault_name
 
  ds_connect $ds_admin_password
 
