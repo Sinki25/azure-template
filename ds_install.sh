@@ -51,27 +51,6 @@ RETVAL=$?
 
 logEndAct "Install_libraries execution result - $RETVAL" 
 
-logBeginAct "DS_remove_servers execution"
-
-ds_connect $ds_admin_password
-
-RETVAL1=$?
-
-logEndAct "Exit code after connection attempt - $RETVAL1"
-
-ds_showservers
-
-RETVAL1=$?
-
-logEndAct "Exit code after showDsServers - $RETVAL1"
-
-get_ds_servers_list $vm_count $resource_group_name $vm_scale_set_name
-
-remove_odd_servers
-
-logBeginAct "The odd servers were successfully removed"
-
-
 logBeginAct "Pre_setup execution"
 
 install_product $link_to_DS_build
