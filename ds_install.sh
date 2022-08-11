@@ -16,6 +16,7 @@ audit_database_name=${15}
 audit_database_login=${16}
 ds_server_name=${17}
 key_vault_name=${18}
+echo "${19}"
 ds_remove_servers=${19}
 instance_name=${20}
 target_db_port=${21}
