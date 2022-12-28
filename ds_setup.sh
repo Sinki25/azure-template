@@ -92,7 +92,7 @@ setupDSLicense() {
   
   sudo mv /tmp/appfirewall.reg /opt/datasunrise/
   
-  sudo chown datasunrise:datasunrise -R /opt/datasunrise/
+  sudo chown datasunrise:datasunrise -R /opt/datasunrise/appfirewall.reg
 
 }
 
@@ -155,7 +155,7 @@ copyProxies() {
 
    service datasunrise start
   
-  logEndAct "Proxies copied."
+   logEndAct "Proxies copied."
                
 }
 
