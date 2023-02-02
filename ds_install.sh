@@ -189,4 +189,6 @@ else
 
  runCleaningTask $RETVAL_LOGIN $ds_root
 
+ setupAdditionals $ds_root $AF_HOME
+
 fi
